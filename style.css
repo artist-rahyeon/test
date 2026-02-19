@@ -111,12 +111,35 @@ a {
 /* Hero Section */
 .hero-section {
     position: relative;
-    height: 100vh;
-    /* Static height */
+    /* height: 100vh; Removed fixed height */
+    min-height: 100vh;
+    /* Ensure at least full screen */
+    height: auto;
+    /* Allow content to push height */
     background: #000;
     color: #fff;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+}
+
+.hero-sticky-container {
+    height: 300vh;
+    /* Scroll track length for animation */
+    width: 100%;
+    position: sticky;
+    background: #000;
+    z-index: 50;
+}
+
+.sticky-image-wrapper {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
     align-items: center;
     overflow: hidden;
 }
@@ -173,11 +196,11 @@ a {
 }
 
 .hero-teaser p:nth-child(2) {
-    animation-delay: 1.2s;
+    animation-delay: 1.4s;
 }
 
 .hero-teaser p:nth-child(3) {
-    animation-delay: 1.4s;
+    animation-delay: 1.8s;
     display: inline-block;
     /* Required for background */
     background: linear-gradient(to right, #4a4a4a, #4a4a4a);
@@ -1263,16 +1286,24 @@ footer {
 
 /* Hero Integrated Showcase */
 #hero-showcase {
-    position: absolute;
-    top: 105%;
-    left: 50%;
-    transform: translateX(-50%);
+    /* Reset for sticky behavior */
+    position: relative;
+    top: auto;
+    left: auto;
     max-width: 1200px;
-    /* Increased from 700px */
-    width: 90vw;
-    opacity: 0;
-    /* Controlled by JS */
+    width: 100%;
     z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform-origin: center center;
+    will-change: transform, opacity;
+
+    /* Initial Animation State */
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.1s linear, transform 0.1s linear;
+    /* Smoothness for JS updates */
 }
 
 @keyframes showcaseReveal {
@@ -1287,24 +1318,13 @@ footer {
     }
 }
 
-.hero-main-image-wrap {
-    position: relative;
-    width: 100%;
-    max-width: 1000px;
-    opacity: 1 !important;
-    transform: none;
-    display: flex;
-    justify-content: center;
-    margin: 20px 0;
-    z-index: 50;
-    min-height: 200px;
-    /* Ensure space is reserved */
-}
+/* Removed .hero-main-image-wrap as it is redundant to #hero-showcase */
 
 .hero-main-image {
     width: auto;
     max-width: 90%;
-    max-height: 50vh;
+    max-height: 85vh;
+    /* Ensure it fits in viewport */
     border-radius: 16px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
     display: block;
