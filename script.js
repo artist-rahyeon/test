@@ -19,43 +19,76 @@ document.querySelectorAll('.fade-up').forEach(el => {
 });
 
 
-// Scroll Reveal Animation for Hero Image
+// Scroll Reveal Animation for Hero Image (Apple-like)
 const heroStickyContainer = document.querySelector('.hero-sticky-container');
 const heroShowcase = document.querySelector('#hero-showcase');
 
 if (heroStickyContainer && heroShowcase) {
-    window.addEventListener('scroll', () => {
-        const containerRect = heroStickyContainer.getBoundingClientRect();
-        const containerTop = containerRect.top;
-        const windowHeight = window.innerHeight;
+    // 간단한 ease (애플처럼 초반은 천천히, 중반 가속, 끝에서 감속)
+    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
-        // Calculate progress: 0 when container enters viewport, 1 when it leaves/finishes
-        // specialized for sticky: we want animation to happen as we scroll INTO the sticky part.
+    let ticking = false;
 
-        // Start animation when container top hits 0 (or slightly before)
-        // The container is 300vh. Sticky part is 100vh. 
-        // We want the image to be fully visible after scrolling about 100vh into the container.
+    const update = () => {
+        const rect = heroStickyContainer.getBoundingClientRect();
+        const vh = window.innerHeight;
 
-        // Distance scrolled FROM the top of the container
-        const scrolled = -containerTop;
+        // 컨테이너 안으로 들어온 거리 (컨테이너 top이 0을 지나 위로 올라갈수록 증가)
+        const navH = document.querySelector('.global-nav')?.offsetHeight || 0;
+        const scrolledInto = -(rect.top - navH);
 
-        // Normalize progress: 0 to 1 over the first windowHeight (viewport height) of scrolling
-        // Adjust divider to control speed. windowHeight means 100vh scroll completes animation.
-        let progress = scrolled / (0.1 * windowHeight);
+        // 애니메이션이 진행될 스크롤 구간 길이(뷰포트 기준). 
+        // 1.5vh ~ 2vh 구간 동안 애니메이션 완료, 그 이후는 정지 상태로 보여줌
+        const duration = 1.5 * vh;
 
-        // Clamp progress
-        if (progress < 0) progress = 0;
-        if (progress > 1) progress = 1;
+        // 0~1로 정규화
+        let t = scrolledInto / duration;
 
-        // Map progress to properties
-        // Opacity: 0 -> 1
-        const opacity = 4 * progress + 0.1;
+        // Lock Logic: t가 1을 넘어가면 애니메이션 종료 상태로 고정
+        if (t < 0) t = 0;
+        if (t > 1) t = 1;
 
-        // Scale: 0.9 -> 1.0
-        const scale = 0.9 + (0.1 * progress);
+        // easing 적용
+        const p = easeOutCubic(t);
 
-        // Apply styles
+        // 애플 스타일: 'Shrink-to-Fit' (큰 이미지 -> 화면에 맞게 축소)
+        const startScale = 3.0;
+        const endScale = 1.0;
+
+        const scale = startScale + (endScale - startScale) * p;
+
+        // opacity: 항상 1
+        const opacity = 1;
+
+        // Panning Effect (Top -> Center)
+        // startScale이 3.0이면 이미지가 커져서 위아래가 잘림.
+        // Top이 보이려면 이미지를 아래로 내려야 함 (translateY > 0).
+        // 정확히 얼마나 내려야 Top이 보일까?
+        // 이미지 높이가 대략 vh이고, scale이 3.0이면 실제 높이는 3vh.
+        // 화면 높이는 1vh. 위아래로 1vh씩 잘림.
+        // 따라서 1vh (window.innerHeight) 만큼 내리면 Top이 화면 상단에 옴.
+
+        const startY = (startScale - 1) * vh / 2; // (3-1)/2 * vh = 100vh
+        const endY = 0;
+        const translateY = startY + (endY - startY) * p;
+
         heroShowcase.style.opacity = opacity;
-        heroShowcase.style.transform = `scale(${scale})`;
-    });
+        heroShowcase.style.transform = `translateY(${translateY}px) scale(${scale})`;
+
+        ticking = false;
+    };
+
+    window.addEventListener(
+        'scroll',
+        () => {
+            if (!ticking) {
+                ticking = true;
+                requestAnimationFrame(update);
+            }
+        },
+        { passive: true }
+    );
+
+    // 최초 1회 세팅(새로고침 직후 위치 반영)
+    update();
 }
