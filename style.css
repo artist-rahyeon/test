@@ -340,7 +340,8 @@ a {
 .bento-item {
     background: var(--bg-gray);
     border-radius: 24px;
-    padding: 50px;
+    padding: 40px;
+    /* Reduced from 50px */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -354,12 +355,14 @@ a {
 
 .bento-item.large {
     grid-column: span 1;
-    aspect-ratio: 1/1;
+    aspect-ratio: 4/3;
+    /* Reduced height (was 1/1) */
 }
 
 .bento-item.small {
     grid-column: span 1;
-    aspect-ratio: 1/1;
+    aspect-ratio: 4/3;
+    /* Reduced height (was 1/1) */
 }
 
 .bento-icon {
@@ -1397,4 +1400,104 @@ footer {
     z-index: -1;
     pointer-events: none;
     animation: pulse 3s infinite ease-in-out;
+}
+/* Proven Section */
+.proven-section {
+    padding: var(--section-spacing) 0;
+    background: #fff;
+    text-align: center;
+}
+
+.proven-header {
+    font-size: 56px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 60px;
+    color: #1d1d1f;
+}
+
+.proven-highlight-red {
+    position: relative;
+    display: inline-block;
+    z-index: 1;
+}
+
+.proven-highlight-red::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: -10px;
+    width: calc(100% + 20px);
+    height: 15px;
+    border-radius: 50%;
+    border-bottom: 4px solid #ff3b30; /* Apple Red */
+    transform: rotate(-1deg);
+    z-index: -1;
+}
+
+.proven-box {
+    background: #000;
+    color: #fff;
+    padding: 60px;
+    border-radius: 20px;
+    display: inline-block; /* Fit content or fixed width? Let's use max-width */
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 80px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    text-align: left;
+}
+
+.proven-list {
+    list-style: none;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 2;
+}
+
+.proven-list li {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.proven-check {
+    color: #ff3b30; /* Checkmark color matching highlight? Or Keep emoji color */
+    font-size: 24px;
+}
+
+.proven-footer p {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: #1d1d1f;
+}
+
+.proven-separator {
+    width: 2px;
+    height: 60px;
+    background: #1d1d1f;
+    margin: 30px auto;
+}
+
+.proven-highlight-pink {
+    color: #ff2d55; /* Pink/Magenta */
+}
+
+@media (max-width: 768px) {
+    .proven-header {
+        font-size: 36px;
+    }
+    
+    .proven-box {
+        padding: 30px;
+    }
+
+    .proven-list {
+        font-size: 18px;
+    }
+
+    .proven-footer p {
+        font-size: 24px;
+    }
 }
