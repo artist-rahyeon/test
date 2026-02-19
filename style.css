@@ -125,7 +125,7 @@ a {
 }
 
 .hero-sticky-container {
-    height: 450vh;
+    height: 350vh;
     /* Extended height for seamless lock + static viewing time */
     width: 100%;
     position: relative;
@@ -242,13 +242,46 @@ a {
 
 
 .hero-sub {
-    position: absolute;
-    bottom: 10vh;
-    font-size: 24px;
-    font-weight: 600;
+    font-size: 40px;
+    /* Increased font size for impact */
+    font-weight: 700;
     color: #fff;
-    opacity: 0;
-    transition: opacity 1s ease;
+    white-space: nowrap;
+    /* opacity, transform controlled by JS */
+    will-change: transform, opacity;
+}
+
+/* Sub Sticky Section */
+.sub-sticky-container {
+    height: 350vh;
+    /* Match user preference */
+    width: 100%;
+    position: relative;
+    background: #000;
+    z-index: 50;
+}
+
+.sticky-sub-wrapper {
+    position: sticky;
+    top: 52px;
+    /* Nav height */
+    height: calc(100vh - 52px);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+#sub-showcase {
+    /* Initial state for JS animation */
+    opacity: 1;
+    transform: scale(3.0);
+    transform-origin: center center;
+    will-change: transform, opacity;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Manifesto Section */

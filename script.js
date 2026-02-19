@@ -19,18 +19,20 @@ document.querySelectorAll('.fade-up').forEach(el => {
 });
 
 
-// Scroll Reveal Animation for Hero Image (Apple-like)
-const heroStickyContainer = document.querySelector('.hero-sticky-container');
-const heroShowcase = document.querySelector('#hero-showcase');
+// Reusable Scroll Animation Function (Apple-like Sticky + Shrink)
+function applyStickyAnimation(containerSelector, targetSelector) {
+    const container = document.querySelector(containerSelector);
+    const target = document.querySelector(targetSelector);
 
-if (heroStickyContainer && heroShowcase) {
+    if (!container || !target) return;
+
     // 간단한 ease (애플처럼 초반은 천천히, 중반 가속, 끝에서 감속)
     const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
     let ticking = false;
 
     const update = () => {
-        const rect = heroStickyContainer.getBoundingClientRect();
+        const rect = container.getBoundingClientRect();
         const vh = window.innerHeight;
 
         // 컨테이너 안으로 들어온 거리 (컨테이너 top이 0을 지나 위로 올라갈수록 증가)
@@ -72,8 +74,8 @@ if (heroStickyContainer && heroShowcase) {
         const endY = 0;
         const translateY = startY + (endY - startY) * p;
 
-        heroShowcase.style.opacity = opacity;
-        heroShowcase.style.transform = `translateY(${translateY}px) scale(${scale})`;
+        target.style.opacity = opacity;
+        target.style.transform = `translateY(${translateY}px) scale(${scale})`;
 
         ticking = false;
     };
@@ -92,3 +94,7 @@ if (heroStickyContainer && heroShowcase) {
     // 최초 1회 세팅(새로고침 직후 위치 반영)
     update();
 }
+
+// Apply animations
+applyStickyAnimation('.hero-sticky-container', '#hero-showcase');
+applyStickyAnimation('.sub-sticky-container', '#sub-showcase');
