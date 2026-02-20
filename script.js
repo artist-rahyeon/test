@@ -180,6 +180,34 @@ if (modal && openModalBtns.length > 0) {
 let isAutoScrolling = false;
 let lastScrollY = window.scrollY;
 
+// Custom Smooth Scroll Function
+function smoothScrollTo(endY, duration) {
+    const startY = window.scrollY;
+    const distance = endY - startY;
+    let startTime = null;
+
+    function animation(currentTime) {
+        if (startTime === null) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const progress = Math.min(timeElapsed / duration, 1);
+
+        // Easing function (easeInOutCubic)
+        const ease = progress < 0.5
+            ? 4 * progress * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+        window.scrollTo(0, startY + (distance * ease));
+
+        if (timeElapsed < duration) {
+            requestAnimationFrame(animation);
+        } else {
+            isAutoScrolling = false; // Reset flag after animation
+        }
+    }
+
+    requestAnimationFrame(animation);
+}
+
 function handleAutoScroll() {
     if (isAutoScrolling) return;
 
@@ -195,129 +223,33 @@ function handleAutoScroll() {
 
     if (!subStickyContainer || !heroStickyContainer) return;
 
-    const subRect = subStickyContainer.getBoundingClientRect();
-    const heroRect = heroStickyContainer.getBoundingClientRect();
     const vh = window.innerHeight;
-    const triggerDistance = 100; // px
 
-    // 1. Initial Scroll -> Snap to Workbook Text
-    // Logic: If user has scrolled past the very top but hasn't reached the workbook text fully
-    // We want to snap when the user starts scrolling down from the top area.
-    // However, the 'sub-sticky-container' is right after the hero-sticky (Text intro).
-    // Wait, let's check index.html structure.
-    // 1. .hero-sticky (Text: SEEN NOTHING...)
-    // 2. .sub-sticky-container (Workbook Text)
-    // 3. .hero-sticky-container (Main Image)
+    // Target 1: End of Workbook Text Animation (Text fully visible/shrunk)
+    // Animation duration is 1.5vh.
+    const target1 = subStickyContainer.offsetTop + (1.5 * vh);
 
-    // Scenario 1: Snap to Workbook Text
-    // If we are at the top (scrollY < vh) and user scrolls down a bit.
-    // The top section (.hero-sticky) is 100vh.
-    // If user scrolls > 50px, snap to .sub-sticky-container top.
+    // Target 2: End of Hero Image Animation (Image fully visible/shrunk)
+    const target2 = heroStickyContainer.offsetTop + (1.5 * vh);
 
-    if (currentScrollY > 50 && currentScrollY < vh - 100) {
-        // Snap to Sub Sticky
-        const targetTop = subStickyContainer.offsetTop;
-        // Only snap if we are not already close
-        if (Math.abs(currentScrollY - targetTop) > 50) {
-            isAutoScrolling = true;
-            window.scrollTo({
-                top: targetTop,
-                behavior: 'smooth'
-            });
-            setTimeout(() => { isAutoScrolling = false; }, 1000); // Debounce
-            return;
-        }
-    }
+    // Duration for slow scroll (ms)
+    const scrollDuration = 2000;
 
-    // Scenario 2: Snap to Hero Image
-    // If we are within the workbook text section, and scroll down a bit.
-    // .sub-sticky-container is 250vh tall.
-    // Best moment to snap is probably after the animation finishes?
-    // Or maybe just from the start of the next section?
-    // User wants: "little scroll -> workbook", then "little scroll -> image".
-
-    // Let's refine:
-    // "Workbook Text" starts at offsetTop of .sub-sticky-container.
-    // If user is at Workbook Text Start + small amount, snap to... wait.
-    // Usually snap points are:
-    // 1. Top -> Workbook Text Setup (Start of animation)
-    // 2. Workbook Text -> Main Image Setup (Start of animation)
-
-    // Let's try to snap to the Main Image container when user is somewhat past the Workbook start.
-    // But Workbook text needs to stay pinned for a while.
-    // Maybe user means "Start the animation automatically"?
-    // The request says: "Automatically go down to data... text screen, then automatically go down to grip_main.png".
-    // This sounds like skipping the "boring" scroll parts.
-
-    // Let's implement a trigger that if you are in the "static" phase of the previous section, it snaps to the next.
-
-    // Simpler approach for "Little Scroll":
-    // 1. From Top (0): Scroll > 50px -> Go to .sub-sticky-container
-    // 2. From .sub-sticky-container Start: Scroll > 50px (inside it) -> Go to .hero-sticky-container??
-    // No, that would skip the text animation.
-    // User likely means: "Make it easy to reach the start of the animation".
-
-    // Let's implement:
-    // 1. Top -> .sub-sticky-container (Start of Text Animation)
-    // 2. End of Text Animation -> .hero-sticky-container (Start of Image Animation)
-
-    // Calculation:
-    // Text Animation Duration is approx 1.5vh (based on script).
-    // .sub-sticky-container top is where animation starts.
-
-    const subTop = subStickyContainer.offsetTop;
-    const heroTop = heroStickyContainer.offsetTop;
-
-    // Trigger 1: Top -> Workbook Text
-    if (currentScrollY < subTop && currentScrollY > 50) {
+    // Trigger 1: Top -> Target 1
+    // Condition: User is at top (scrolled < 100px) and scrolls down a bit (> 10px from last stop?)
+    // Simplified: If currentScrollY is small (> 50) and far from Target 1.
+    if (currentScrollY > 50 && currentScrollY < target1 - 100) {
         isAutoScrolling = true;
-        window.scrollTo({ top: subTop, behavior: 'smooth' });
-        setTimeout(() => { isAutoScrolling = false; }, 800);
+        smoothScrollTo(target1, scrollDuration);
         return;
     }
 
-    // Trigger 2: Workbook Text -> Hero Image
-    // If user has seen the text animation (scrolled past duration), snap to image?
-    // Or just help them get to the image?
-    // Let's say if they are past the text animation "active" phase.
-    // The container is 250vh. Animation is 1.5vh (window height).
-    // So 1.5 * window.innerHeight is the animation length.
-    // Let's snap to the next section if they are comfortably past the animation start.
-
-    // Adjust logic: If user is "done" with text (e.g. at 200vh into the container), snap to next?
-    // Or maybe user implies "Scroll a little" = "Show me the next thing".
-    // Let's allow manual scroll for the animation itself, but 'snap' to the start of the next container if we are close?
-
-    // Let's try:
-    // If currentScrollY is within [subTop + 100, heroTop - 100], and user stops scrolling?
-    // Auto-scroll on 'scroll' event is tricky without "scrollend".
-
-    // Re-reading user request: "Scroll a little -> automatically go down to text screen".
-    // "Scroll a little more -> automatically go down to image".
-
-    // This implies a "Snap Scroll" behavior.
-    // Let's assume:
-    // 1. Top Area -> Snap to Sub Sticky Top
-    // 2. Sub Sticky Area (after some scroll) -> Snap to Hero Sticky Top
-
-    // To avoid being annoying, only snap TO the start of sections.
-
-    // Snap to Hero Image Container
-    // If we are inside Sub Sticky, and closer to end than beginning? 
-    // Or just if we scroll past a certain point.
-
-    // Let's set a trigger point: 
-    // If (scrollY > subTop + (1.5 * vh) + 100) -> Snap to heroTop?
-    // This skips the "static pinned" phase.
-    // If container is 250vh, and animation is 1.5vh (150vh).
-    // Remaining 100vh is static.
-    // If user scrolls into that static zone, snap to next section.
-
-    const animationEnd = subTop + (1.5 * vh);
-    if (currentScrollY > animationEnd && currentScrollY < heroTop - 50) {
+    // Trigger 2: Target 1 -> Target 2
+    // Condition: User has passed Target 1 (text visible) and scrolls down a bit more.
+    // If currentScrollY is > Target 1 + 50 AND far from Target 2.
+    if (currentScrollY > target1 + 50 && currentScrollY < target2 - 100) {
         isAutoScrolling = true;
-        window.scrollTo({ top: heroTop, behavior: 'smooth' });
-        setTimeout(() => { isAutoScrolling = false; }, 800);
+        smoothScrollTo(target2, scrollDuration);
         return;
     }
 }
