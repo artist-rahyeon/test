@@ -115,9 +115,9 @@ const bookLinks = {
         'algebra': 'https://www.yes24.com/product/goods/174267441'
     },
     'type': {
-        'common1': '#', // Placeholder for Type Book
-        'common2': '#', // Placeholder for Type Book
-        'algebra': '#'  // Placeholder for Type Book
+        'common1': 'https://www.yes24.com/product/goods/169453293', // Grip 유형서 공통수학1
+        'common2': 'https://www.yes24.com/product/goods/175958741', // Grip 유형서 공통수학2
+        'algebra': 'https://www.yes24.com/product/goods/174267443'  // Grip 유형서 대수
     }
 };
 

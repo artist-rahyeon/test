@@ -323,6 +323,8 @@ a {
 .grid-section {
     padding-bottom: var(--section-spacing);
     background: #fff;
+    overflow: hidden;
+    /* Prevent overflow */
 }
 
 .section-title {
@@ -1121,15 +1123,20 @@ footer {
 
     .bento-grid {
         grid-template-columns: 1fr;
-        width: 92%;
-        /* Reduce width slightly to prevent sticking out */
-        margin: 0 auto;
+        width: 100%;
+        max-width: 100%;
+        padding: 0 20px;
+        /* Internal padding instead of width reduction */
+        margin: 0;
+        box-sizing: border-box;
     }
 
     .bento-item {
+        width: 100%;
         padding: 30px;
-        /* Reduced from 40px */
+        box-sizing: border-box;
     }
+
 
 
     .book-shelf {
