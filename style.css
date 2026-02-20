@@ -369,10 +369,9 @@ a {
 .section-title {
     font-size: 48px;
     font-weight: 700;
-    margin-top: 50px;
     margin-bottom: 20px;
     opacity: 0;
-    color: #000000;
+    color: #ffffff;
     text-align: center;
 }
 
@@ -498,13 +497,13 @@ a {
 }
 
 .neon-blue {
-    color: #fff;
-    text-shadow: 0 0 20px rgba(41, 151, 255, 0.8), 0 0 40px rgba(41, 151, 255, 0.5);
+    color: var(--accent-blue);
+    /* Removed text-shadow for clean look */
 }
 
 .neon-red {
-    color: #fff;
-    text-shadow: 0 0 20px rgba(255, 59, 48, 0.8), 0 0 40px rgba(255, 59, 48, 0.5);
+    color: var(--accent-red);
+    /* Removed text-shadow for clean look */
 }
 
 .data-divider {
