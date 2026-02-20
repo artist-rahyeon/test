@@ -121,14 +121,14 @@ let selectedBookType = '';
 // URL Map
 const bookUrls = {
     'concept': {
-        'common1': 'https://www.yes24.com/product/goods/169453293',
-        'common2': 'https://www.yes24.com/product/goods/175958741',
-        'algebra': 'https://www.yes24.com/product/goods/174267443'
+        'common1': 'https://www.yes24.com/product/goods/169453294',
+        'common2': 'https://www.yes24.com/product/goods/175957529',
+        'algebra': 'https://www.yes24.com/product/goods/174267441'
     },
     'pattern': {
-        'common1': 'https://www.yes24.com/search?q=grip%20pattern%20common1', // Placeholder Search Link
-        'common2': 'https://www.yes24.com/search?q=grip%20pattern%20common2', // Placeholder Search Link
-        'algebra': 'https://www.yes24.com/search?q=grip%20pattern%20algebra'  // Placeholder Search Link
+        'common1': 'https://www.yes24.com/product/goods/169453293', // Placeholder Search Link
+        'common2': 'https://www.yes24.com/product/goods/175958741', // Placeholder Search Link
+        'algebra': 'https://www.yes24.com/product/goods/174267443'  // Placeholder Search Link
     }
 };
 

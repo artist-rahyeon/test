@@ -11,6 +11,8 @@
     /* Deep Black */
     --text-primary: #FFFFFF;
     --text-secondary: #86868B;
+    --text-secondary-2: #3f3f3f;
+    --text-secondary-3: #1b1b1b;
     --accent-blue: #2997FF;
     /* Apple Blue lighter for dark mode */
     --accent-red: #FF3B30;
@@ -937,7 +939,7 @@ a {
 
 .book-sub {
     font-size: 19px;
-    color: var(--text-primary);
+    color: var(--text-secondary-2);
     font-weight: 600;
     margin-bottom: 6px;
 }
