@@ -226,13 +226,14 @@ function handleAutoScroll() {
     const vh = window.innerHeight;
 
     // Target 1: End of Workbook Text Animation (Text fully visible/shrunk)
-    const target1 = subStickyContainer.offsetTop + (1.0 * vh);
+    const target1 = subStickyContainer.offsetTop + (0.5 * vh);
 
     // Target 2: End of Hero Image Animation (Image fully visible/shrunk)
-    const target2 = heroStickyContainer.offsetTop + (1.0 * vh);
+    const target2 = heroStickyContainer.offsetTop + (0.5 * vh);
 
     // Duration for slow scroll (ms)
-    const scrollDuration = 2000;
+    // Faster on mobile to avoid frustration
+    const scrollDuration = window.innerWidth < 768 ? 800 : 2000;
 
     // Trigger 1: Top -> Target 1
     // Condition: User is at top (scrolled < 100px) and scrolls down a bit (> 10px from last stop?)
@@ -348,17 +349,20 @@ function handleManifestoScroll() {
     // Show Item 3: 0.50 - 0.75
     // Show Item 4: 0.75 - 1.0
 
-    // However, user might want "Fade In -> Wait -> Fade Out".
-    // Or just "Switch". The prompt says "Appear -> Disappear".
+    // Intervals logic adjusted for 300vh/400vh
+    // Item 1: 0.00 - 0.25
+    // Item 2: 0.25 - 0.50
+    // Item 3: 0.50 - 0.75
+    // Item 4: 0.75 - 1.00
 
     // Let's hide all, show current.
     manifestoLines.forEach(line => line.classList.remove('active'));
 
-    if (progress < 0.20) {
+    if (progress < 0.25) {
         manifestoLines[0].classList.add('active');
-    } else if (progress < 0.40) {
+    } else if (progress < 0.50) {
         manifestoLines[1].classList.add('active');
-    } else if (progress < 0.60) {
+    } else if (progress < 0.75) {
         manifestoLines[2].classList.add('active');
     } else {
         manifestoLines[3].classList.add('active');
