@@ -102,78 +102,135 @@ applyStickyAnimation('.sub-sticky-container', '#sub-showcase');
 
 
 // Modal Logic
+console.log('[GRIP DEBUG] Script Loaded');
+
 const modal = document.getElementById('purchase-modal');
-const modalTitle = document.getElementById('modal-title');
 const openModalBtns = document.querySelectorAll('.open-modal-btn');
 const closeBtn = document.querySelector('.close-btn');
+const backBtn = document.getElementById('modal-back-btn');
 
-// Links Configuration
-const bookLinks = {
+// Steps
+const step1 = document.getElementById('modal-step-1');
+const step2 = document.getElementById('modal-step-2');
+const step1Btns = document.querySelectorAll('.modal-option-btn');
+const subjectLinks = document.querySelectorAll('.subject-link');
+
+// State
+let selectedBookType = '';
+
+// URL Map
+const bookUrls = {
     'concept': {
-        'common1': 'https://www.yes24.com/product/goods/169453294',
-        'common2': 'https://www.yes24.com/product/goods/175957529',
-        'algebra': 'https://www.yes24.com/product/goods/174267441'
+        'common1': 'https://www.yes24.com/product/goods/169453293',
+        'common2': 'https://www.yes24.com/product/goods/175958741',
+        'algebra': 'https://www.yes24.com/product/goods/174267443'
     },
-    'type': {
-        'common1': 'https://www.yes24.com/product/goods/169453293', // Grip 유형서 공통수학1
-        'common2': 'https://www.yes24.com/product/goods/175958741', // Grip 유형서 공통수학2
-        'algebra': 'https://www.yes24.com/product/goods/174267443'  // Grip 유형서 대수
+    'pattern': {
+        'common1': 'https://www.yes24.com/search?q=grip%20pattern%20common1', // Placeholder Search Link
+        'common2': 'https://www.yes24.com/search?q=grip%20pattern%20common2', // Placeholder Search Link
+        'algebra': 'https://www.yes24.com/search?q=grip%20pattern%20algebra'  // Placeholder Search Link
     }
 };
 
-const linkCommon1 = document.getElementById('link-common1');
-const linkCommon2 = document.getElementById('link-common2');
-const linkAlgebra = document.getElementById('link-algebra');
-
 if (modal && openModalBtns.length > 0) {
+    console.log('[GRIP DEBUG] Modal logic initialized');
+
+    // Open Modal
     openModalBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
+            console.log('[GRIP DEBUG] Open Modal Clicked');
             e.preventDefault();
-            const bookTitle = btn.getAttribute('data-book-title');
-            const bookType = btn.getAttribute('data-book-type'); // 'concept' or 'type'
-
-            // Set modal title depending on which book was clicked
-            modalTitle.textContent = `${bookTitle} 구매하기`;
-
-            // Update Links based on book type
-            if (bookLinks[bookType]) {
-                linkCommon1.href = bookLinks[bookType].common1;
-                linkCommon2.href = bookLinks[bookType].common2;
-                linkAlgebra.href = bookLinks[bookType].algebra;
-            } else {
-                // Fallback / Reset
-                linkCommon1.href = '#';
-                linkCommon2.href = '#';
-                linkAlgebra.href = '#';
-            }
-
-            modal.classList.add('show');
-            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            resetModal();
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 10);
+            document.body.style.overflow = 'hidden';
         });
     });
 
+    // Close Modal
     const closeModal = () => {
+        console.log('[GRIP DEBUG] Closing Modal');
         modal.classList.remove('show');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            resetModal();
+        }, 300);
         document.body.style.overflow = '';
     };
 
-    if (closeBtn) {
-        closeBtn.addEventListener('click', closeModal);
-    }
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
 
-    // Close on click outside
+    // Close on outside click
     window.addEventListener('click', (e) => {
         if (e.target === modal) {
             closeModal();
         }
     });
 
-    // Close on Escape key
+    // Close on Esc
     window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && modal.classList.contains('show')) {
             closeModal();
         }
     });
+
+    // Step 1: Select Type
+    step1Btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            selectedBookType = btn.dataset.bookType;
+            console.log('[GRIP DEBUG] Book Type Selected:', selectedBookType);
+            showStep(2);
+        });
+    });
+
+    // Step 2: Back Button
+    if (backBtn) {
+        backBtn.addEventListener('click', () => {
+            console.log('[GRIP DEBUG] Back Button Clicked');
+            showStep(1);
+        });
+    }
+
+    // Step 2: Select Subject & Navigate
+    subjectLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const subject = link.dataset.subject;
+            console.log('[GRIP DEBUG] Subject Clicked:', subject);
+
+            // Get URL based on selection
+            const targetUrl = bookUrls[selectedBookType]?.[subject];
+            console.log('[GRIP DEBUG] Navigating to:', targetUrl);
+
+            if (targetUrl) {
+                // Navigate directly to the distinct URL
+                window.open(targetUrl, '_blank');
+                closeModal();
+            } else {
+                console.error('[GRIP DEBUG] No URL found for selection');
+            }
+        });
+    });
+
+    function showStep(stepNum) {
+        console.log('[GRIP DEBUG] Showing Step:', stepNum);
+        if (stepNum === 1) {
+            step1.classList.add('active');
+            step2.classList.remove('active');
+        } else {
+            step1.classList.remove('active');
+            step2.classList.add('active');
+        }
+    }
+
+    function resetModal() {
+        selectedBookType = '';
+        showStep(1);
+    }
+} else {
+    console.error('[GRIP DEBUG] Modal elements not found');
 }
 
 // Auto-Scroll Logic (Snap to Next Section)

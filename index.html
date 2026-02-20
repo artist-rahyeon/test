@@ -158,8 +158,8 @@
 
             <div class="engine-visual-box fade-up">
                 <div class="map-container">
-                    <img src="korea-tech_map.png" alt="Korea Tech Map"
-                        style="width: 100%; height: 100%; object-fit: contain;">
+                    <img src="korea_tech_map.png" alt="Korea Tech Map"
+                        style="width: 100%; height: 100%; object-fit: contain; opacity: 0.8;">
                 </div>
                 <p class="engine-desc">
                     모집단에 가까운 표본집단 분석.<br>
@@ -327,8 +327,6 @@
                     <h3>GRIP 개념서</h3>
                     <p class="book-sub">"개념이 흔들린다면"</p>
                     <p class="book-desc">출제 기반 개념 구조화</p>
-                    <button class="link-more open-modal-btn" data-book-title="GRIP 개념서" data-book-type="concept">더 알아보기
-                        ></button>
                 </div>
 
                 <!-- Book 2 -->
@@ -337,8 +335,6 @@
                     <h3>GRIP 유형서</h3>
                     <p class="book-sub">"실전이 필요하다면"</p>
                     <p class="book-desc">전국 내신 필수 유형 총정리</p>
-                    <button class="link-more open-modal-btn" data-book-title="GRIP 유형서" data-book-type="type">더 알아보기
-                        ></button>
                 </div>
             </div>
     </section>
@@ -397,16 +393,38 @@
     <div id="purchase-modal" class="modal">
         <div class="modal-content">
             <button class="close-btn">&times;</button>
-            <h3 id="modal-title">교재 선택</h3>
-            <div class="subject-list">
-                <a href="https://www.yes24.com/product/goods/169453293" id="link-common1" class="subject-link">공통수학1</a>
-                <a href="https://www.yes24.com/product/goods/175958741" id="link-common2" class="subject-link">공통수학2</a>
-                <a href="https://www.yes24.com/product/goods/174267443" id="link-algebra" class="subject-link">대수</a>
+
+            <!-- Step 1: Select Book Type -->
+            <div id="modal-step-1" class="modal-step active">
+                <h3>교재를 선택해주세요</h3>
+                <div class="modal-options">
+                    <button class="modal-option-btn" data-book-type="concept">
+                        <span class="option-title">GRIP 개념서</span>
+                        <span class="option-desc">개념부터 실전까지</span>
+                    </button>
+                    <button class="modal-option-btn" data-book-type="pattern">
+                        <span class="option-title">GRIP 유형서</span>
+                        <span class="option-desc">내신 고득점 솔루션</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Select Subject -->
+            <div id="modal-step-2" class="modal-step">
+                <div class="modal-header-nav">
+                    <button id="modal-back-btn" class="modal-back-btn">‹ 뒤로</button>
+                    <h3>과목을 선택해주세요</h3>
+                </div>
+                <div class="subject-list">
+                    <a href="#" class="subject-link" data-subject="common1">공통수학1</a>
+                    <a href="#" class="subject-link" data-subject="common2">공통수학2</a>
+                    <a href="#" class="subject-link" data-subject="algebra">대수</a>
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="script.js?v=cleanup1"></script>
+    <script src="script.js?v=modal_debug"></script>
 </body>
 
 </html>
