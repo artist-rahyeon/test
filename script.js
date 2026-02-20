@@ -226,11 +226,10 @@ function handleAutoScroll() {
     const vh = window.innerHeight;
 
     // Target 1: End of Workbook Text Animation (Text fully visible/shrunk)
-    // Animation duration is 1.5vh.
-    const target1 = subStickyContainer.offsetTop + (1.5 * vh);
+    const target1 = subStickyContainer.offsetTop + (1.0 * vh);
 
     // Target 2: End of Hero Image Animation (Image fully visible/shrunk)
-    const target2 = heroStickyContainer.offsetTop + (1.5 * vh);
+    const target2 = heroStickyContainer.offsetTop + (1.0 * vh);
 
     // Duration for slow scroll (ms)
     const scrollDuration = 2000;
@@ -245,12 +244,63 @@ function handleAutoScroll() {
     }
 
     // Trigger 2: Target 1 -> Target 2
-    // Condition: User has passed Target 1 (text visible) and scrolls down a bit more.
     // If currentScrollY is > Target 1 + 50 AND far from Target 2.
     if (currentScrollY > target1 + 50 && currentScrollY < target2 - 100) {
         isAutoScrolling = true;
         smoothScrollTo(target2, scrollDuration);
         return;
+    }
+
+    // Manifesto Targets
+    const manifestoContainer = document.querySelector('.manifesto-container');
+    if (manifestoContainer) {
+        const manStart = manifestoContainer.offsetTop;
+        const manHeight = manifestoContainer.offsetHeight;
+        const manScrollable = manHeight - vh; // 300vh usually
+
+        // Snap Points (Percentages matched to CSS logic)
+        // Line 1 (0-20%): Aim for 10%
+        const target3 = manStart + (manScrollable * 0.10);
+
+        // Line 2 (20-45%): Aim for 32.5%
+        const target4 = manStart + (manScrollable * 0.325);
+
+        // Line 3 (45-70%): Aim for 57.5%
+        const target5 = manStart + (manScrollable * 0.575);
+
+        // Line 4 (70-100%): Aim for 85%
+        const target6 = manStart + (manScrollable * 0.85);
+
+        const buffer = 100; // Buffer zone
+
+        // Trigger 3: Target 2 -> Target 3 (Manifesto Line 1)
+        if (currentScrollY > target2 + 50 && currentScrollY < target3 - buffer) {
+            isAutoScrolling = true;
+            smoothScrollTo(target3, scrollDuration);
+            return;
+        }
+
+        // Trigger 4: Line 1 -> Line 2
+        // If we are past Line 1 target but before Line 2
+        if (currentScrollY > target3 + buffer && currentScrollY < target4 - buffer) {
+            isAutoScrolling = true;
+            smoothScrollTo(target4, scrollDuration);
+            return;
+        }
+
+        // Trigger 5: Line 2 -> Line 3
+        if (currentScrollY > target4 + buffer && currentScrollY < target5 - buffer) {
+            isAutoScrolling = true;
+            smoothScrollTo(target5, scrollDuration);
+            return;
+        }
+
+        // Trigger 6: Line 3 -> Line 4
+        if (currentScrollY > target5 + buffer && currentScrollY < target6 - buffer) {
+            isAutoScrolling = true;
+            smoothScrollTo(target6, scrollDuration);
+            return;
+        }
     }
 }
 

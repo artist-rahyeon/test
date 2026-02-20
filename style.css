@@ -312,7 +312,7 @@ a {
 /* Manifesto Section */
 /* Manifesto Section (Scroll Sequence) */
 .manifesto-container {
-    height: 400vh;
+    height: 250vh;
     /* Long scroll area for 4 items */
     position: relative;
     background: #000;
@@ -1056,6 +1056,10 @@ footer {
 
 .highlight {
     color: var(--accent-blue);
+}
+
+.text-red {
+    color: var(--accent-red);
 }
 
 /* Outro Section */
