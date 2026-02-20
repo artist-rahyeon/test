@@ -356,9 +356,9 @@ function handleManifestoScroll() {
 
     if (progress < 0.20) {
         manifestoLines[0].classList.add('active');
-    } else if (progress < 0.45) {
+    } else if (progress < 0.40) {
         manifestoLines[1].classList.add('active');
-    } else if (progress < 0.70) {
+    } else if (progress < 0.60) {
         manifestoLines[2].classList.add('active');
     } else {
         manifestoLines[3].classList.add('active');

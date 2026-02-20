@@ -313,7 +313,7 @@ a {
 /* Manifesto Section (Scroll Sequence) */
 .manifesto-container {
     height: 250vh;
-    /* Long scroll area for 4 items */
+    /* Increased back for better pacing */
     position: relative;
     background: #000;
 }
@@ -339,7 +339,10 @@ a {
     color: #fff;
     opacity: 0;
     transform: translateY(20px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    /* Slower transition */
+    transition-delay: 0.15s;
+    /* Add time lag */
     width: 90%;
     max-width: 1200px;
 }
@@ -366,9 +369,10 @@ a {
 .section-title {
     font-size: 48px;
     font-weight: 700;
+    margin-top: 50px;
     margin-bottom: 20px;
     opacity: 0;
-    color: #fff;
+    color: #000000;
     text-align: center;
 }
 
