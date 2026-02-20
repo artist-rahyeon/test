@@ -256,11 +256,72 @@ function handleAutoScroll() {
 
 // Throttle scroll event for performance
 let scrollTimeout;
+// Manifesto Scroll Animation
+const manifestoContainer = document.querySelector('.manifesto-container');
+const manifestoLines = document.querySelectorAll('.manifesto-line');
+
+function handleManifestoScroll() {
+    if (!manifestoContainer) return;
+
+    const rect = manifestoContainer.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const containerHeight = manifestoContainer.offsetHeight; // 400vh usually
+
+    // Calculate progress: 0 when top enters viewport, 1 when bottom leaves viewport?
+    // Actually we want pinning behavior.
+    // The container is relative, sticky is inside.
+    // Progress = how far we scrolled into the container relative to its scrollable height.
+
+    // Start animation when container top hits 0.
+    // End animation when container bottom hits window height (unpin).
+
+    // Scrollable Logic:
+    // We have 4 lines to show.
+    // Container is 400vh. Window is 100vh.
+    // Scrollable distance = 300vh.
+
+    const startY = manifestoContainer.offsetTop;
+    const endY = startY + containerHeight - vh;
+    const scrollY = window.scrollY;
+
+    if (scrollY < startY - vh || scrollY > endY + vh) return; // Optimize
+
+    // Normalize progress 0 to 1 within the stickiness
+    let progress = (scrollY - startY) / (containerHeight - vh);
+
+    // Clamp
+    progress = Math.max(0, Math.min(1, progress));
+
+    // We have 4 items. 
+    // Show Item 1: 0.0 - 0.25
+    // Show Item 2: 0.25 - 0.50
+    // Show Item 3: 0.50 - 0.75
+    // Show Item 4: 0.75 - 1.0
+
+    // However, user might want "Fade In -> Wait -> Fade Out".
+    // Or just "Switch". The prompt says "Appear -> Disappear".
+
+    // Let's hide all, show current.
+    manifestoLines.forEach(line => line.classList.remove('active'));
+
+    if (progress < 0.20) {
+        manifestoLines[0].classList.add('active');
+    } else if (progress < 0.45) {
+        manifestoLines[1].classList.add('active');
+    } else if (progress < 0.70) {
+        manifestoLines[2].classList.add('active');
+    } else {
+        manifestoLines[3].classList.add('active');
+    }
+}
+
+// Attach to scroll
+window.addEventListener('scroll', handleManifestoScroll, { passive: true });
 window.addEventListener('scroll', () => {
     if (!scrollTimeout) {
         scrollTimeout = setTimeout(() => {
             handleAutoScroll();
             scrollTimeout = null;
-        }, 50); // Check every 50ms
+        }, 50);
     }
 }, { passive: true });
