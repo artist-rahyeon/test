@@ -98,3 +98,49 @@ function applyStickyAnimation(containerSelector, targetSelector) {
 // Apply animations
 applyStickyAnimation('.hero-sticky-container', '#hero-showcase');
 applyStickyAnimation('.sub-sticky-container', '#sub-showcase');
+
+
+// Modal Logic
+const modal = document.getElementById('purchase-modal');
+const modalTitle = document.getElementById('modal-title');
+const openModalBtns = document.querySelectorAll('.open-modal-btn');
+const closeBtn = document.querySelector('.close-btn');
+
+if (modal && openModalBtns.length > 0) {
+    openModalBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const bookTitle = btn.getAttribute('data-book-title');
+
+            // Set modal title depending on which book was clicked
+            // e.g., "GRIP 개념서 구매하기"
+            modalTitle.textContent = `${bookTitle} 구매하기`;
+
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        });
+    });
+
+    const closeModal = () => {
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+    };
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeModal);
+    }
+
+    // Close on click outside
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Close on Escape key
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('show')) {
+            closeModal();
+        }
+    });
+}
