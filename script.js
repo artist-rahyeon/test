@@ -101,137 +101,111 @@ applyStickyAnimation('.sub-sticky-container', '#sub-showcase');
 
 
 
-// Modal Logic
-console.log('[GRIP DEBUG] Script Loaded');
+// --- NEW: Hero Silhouette Effect ---
+window.addEventListener('scroll', () => {
+    const heroImg = document.querySelector('.silhouette-effect');
+    if (!heroImg) return;
 
-const modal = document.getElementById('purchase-modal');
-const openModalBtns = document.querySelectorAll('.open-modal-btn');
-const closeBtn = document.querySelector('.close-btn');
-const backBtn = document.getElementById('modal-back-btn');
+    // As we scroll down, increase brightness and reset contrast/shadow
+    const scrollY = window.scrollY;
+    // We want the effect to clear out within the first 500px of scrolling
+    let progress = Math.min(scrollY / 500, 1);
 
-// Steps
-const step1 = document.getElementById('modal-step-1');
-const step2 = document.getElementById('modal-step-2');
-const step1Btns = document.querySelectorAll('.modal-option-btn');
-const subjectLinks = document.querySelectorAll('.subject-link');
+    // Base: filter: brightness(0) contrast(1.2) drop-shadow(0 0 10px rgba(255,255,255,0.05));
+    // Final: filter: brightness(1) contrast(1) drop-shadow(0 0 0px rgba(255,255,255,0));
+    const brightness = progress;
+    const contrast = 1.2 - (0.2 * progress);
+    const dropShadowAlpha = 0.05 * (1 - progress);
 
-// State
-let selectedBookType = '';
+    heroImg.style.filter = `brightness(${brightness}) contrast(${contrast}) drop-shadow(0 0 10px rgba(255,255,255,${dropShadowAlpha}))`;
+});
 
-// URL Map
-const bookUrls = {
-    'concept': {
-        'common1': 'https://www.yes24.com/product/goods/169453294',
-        'common2': 'https://www.yes24.com/product/goods/175957529',
-        'algebra': 'https://www.yes24.com/product/goods/174267441'
-    },
-    'pattern': {
-        'common1': 'https://www.yes24.com/product/goods/169453293', // Placeholder Search Link
-        'common2': 'https://www.yes24.com/product/goods/175958741', // Placeholder Search Link
-        'algebra': 'https://www.yes24.com/product/goods/174267443'  // Placeholder Search Link
-    }
-};
+// --- NEW: Showcase Tab Logic ---
+document.addEventListener('DOMContentLoaded', () => {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const showcasePanels = document.querySelectorAll('.showcase-panel');
 
-if (modal && openModalBtns.length > 0) {
-    console.log('[GRIP DEBUG] Modal logic initialized');
-
-    // Open Modal
-    openModalBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            console.log('[GRIP DEBUG] Open Modal Clicked');
-            e.preventDefault();
-            resetModal();
-            modal.style.display = 'flex';
-            setTimeout(() => {
-                modal.classList.add('show');
-            }, 10);
-            document.body.style.overflow = 'hidden';
-        });
-    });
-
-    // Close Modal
-    const closeModal = () => {
-        console.log('[GRIP DEBUG] Closing Modal');
-        modal.classList.remove('show');
-        setTimeout(() => {
-            modal.style.display = 'none';
-            resetModal();
-        }, 300);
-        document.body.style.overflow = '';
-    };
-
-    if (closeBtn) closeBtn.addEventListener('click', closeModal);
-
-    // Close on outside click
-    window.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            closeModal();
-        }
-    });
-
-    // Close on Esc
-    window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('show')) {
-            closeModal();
-        }
-    });
-
-    // Step 1: Select Type
-    step1Btns.forEach(btn => {
+    tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            selectedBookType = btn.dataset.bookType;
-            console.log('[GRIP DEBUG] Book Type Selected:', selectedBookType);
-            showStep(2);
-        });
-    });
+            // Remove active from all
+            tabBtns.forEach(b => b.classList.remove('active'));
+            showcasePanels.forEach(p => p.classList.remove('active'));
 
-    // Step 2: Back Button
-    if (backBtn) {
-        backBtn.addEventListener('click', () => {
-            console.log('[GRIP DEBUG] Back Button Clicked');
-            showStep(1);
-        });
-    }
-
-    // Step 2: Select Subject & Navigate
-    subjectLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const subject = link.dataset.subject;
-            console.log('[GRIP DEBUG] Subject Clicked:', subject);
-
-            // Get URL based on selection
-            const targetUrl = bookUrls[selectedBookType]?.[subject];
-            console.log('[GRIP DEBUG] Navigating to:', targetUrl);
-
-            if (targetUrl) {
-                // Navigate directly to the distinct URL
-                window.open(targetUrl, '_blank');
-                closeModal();
-            } else {
-                console.error('[GRIP DEBUG] No URL found for selection');
+            // Add active to clicked
+            btn.classList.add('active');
+            const targetId = `tab-${btn.dataset.target}`;
+            const targetPanel = document.getElementById(targetId);
+            if (targetPanel) {
+                targetPanel.classList.add('active');
             }
         });
     });
 
-    function showStep(stepNum) {
-        console.log('[GRIP DEBUG] Showing Step:', stepNum);
-        if (stepNum === 1) {
-            step1.classList.add('active');
-            step2.classList.remove('active');
-        } else {
-            step1.classList.remove('active');
-            step2.classList.add('active');
+    // --- NEW: Fullscreen Preview Modal Logic ---
+    const previewModal = document.getElementById('preview-modal');
+    const previewBtns = document.querySelectorAll('.btn-preview');
+    const closePreviewBtn = document.querySelector('.preview-close-btn');
+    const previewPanes = document.querySelectorAll('.preview-pane');
+
+    const openPreview = (type) => {
+        if (!previewModal) return;
+
+        // Hide all panes
+        previewPanes.forEach(pane => pane.classList.remove('active'));
+
+        // Show selected pane
+        const targetPane = document.getElementById(`preview-${type}`);
+        if (targetPane) {
+            targetPane.classList.add('active');
         }
+
+        // Show modal
+        previewModal.style.display = 'flex';
+        // Small delay to allow display flex to apply before opacity transition
+        setTimeout(() => {
+            previewModal.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }, 10);
+    };
+
+    const closePreview = () => {
+        if (!previewModal) return;
+        previewModal.classList.remove('show');
+        setTimeout(() => {
+            previewModal.style.display = 'none';
+            document.body.style.overflow = ''; // Restore scrolling
+        }, 300); // match css transition
+    };
+
+    previewBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const type = btn.dataset.previewType;
+            openPreview(type);
+        });
+    });
+
+    if (closePreviewBtn) {
+        closePreviewBtn.addEventListener('click', closePreview);
     }
 
-    function resetModal() {
-        selectedBookType = '';
-        showStep(1);
+    // Close on backdrop click
+    if (previewModal) {
+        previewModal.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal-backdrop')) {
+                closePreview();
+            }
+        });
     }
-} else {
-    console.error('[GRIP DEBUG] Modal elements not found');
-}
+
+    // Close on ESC key
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closePreview();
+        }
+    });
+
+});
 
 // Auto-Scroll Logic (Snap to Next Section)
 let isAutoScrolling = false;
