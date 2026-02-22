@@ -1497,11 +1497,7 @@ footer {
         font-size: 32px;
     }
 
-    .nav-links {
-        display: none;
-    }
-
-    /* Hide links on mobile for now */
+    /* Removed .nav-links { display: none; } so users can see the Resource Center link */
 
     /* New Sections Responsive */
     .stat-grid {
@@ -2798,8 +2794,13 @@ footer {
     }
 
     .nav-links {
-        gap: 12px;
-        font-size: 11px;
+        gap: 16px;
+        font-size: 13px;
+    }
+
+    /* Hide unnecessary section links on mobile, keep only Resource Center and CTA */
+    .nav-links a:not([href="board.html"]):not(.nav-btn) {
+        display: none;
     }
 
     .nav-logo {
